@@ -43,6 +43,23 @@ fun main() {
         return ok
     }
 
+    fun List<Int>.isReportLegal(): Boolean {
+        var ok = (isAscending() || isDescending()) && isLegal()
+
+        if (!ok) { // Check if we can remove one and make it legal then
+            for (i in this.indices) {
+                val tmp = this.toMutableList().also { it.removeAt(i) }
+                if ((tmp.isAscending() || tmp.isDescending()) && tmp.isLegal()) {
+                    ok = true
+                    break
+                }
+            }
+        }
+
+        "$this is Legal: $ok".println()
+        return ok
+    }
+
     fun part1(input: List<String>): Int {
         return input.map { report ->
             report.split(" ")
@@ -56,22 +73,18 @@ fun main() {
         return input.map { report ->
             report.split(" ")
                 .map { it.toInt() }
-        }
-            .filter { it.isAscending() || it.isDescending() }
-            .count { it.isLegal() }
+        }.count { it.isReportLegal() }
     }
 
     // Test if implementation meets criteria from the description, like:
 //    check(part1(listOf("test_input")) == 1)
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day02_test")
     check(part1(testInput) == 2)
-//    check(part2(testInput) == 4)
+    check(part2(testInput) == 4)
 
-    // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day02")
-    part1(input).println()
-//    part2(input).println()
+//    part1(input).println()
+    part2(input).println()
 }
 
