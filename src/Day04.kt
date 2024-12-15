@@ -46,45 +46,38 @@ fun main() {
 
     fun part1(input: List<String>): Int {
 
-        val all =
-            input.mapIndexed { y, s ->
-                s.mapIndexed { x, c ->
-                    LetterPoint(x, y, c)
-                }
-            }.flatten()
+        val all = input.mapIndexed { y, s ->
+            s.mapIndexed { x, c ->
+                LetterPoint(x, y, c)
+            }
+        }.flatten()
 
         val maxX = input.lastIndex
         val maxY = all.last().y
 
-        var words = 0
+        return all.filter { it.letter == 'X' }
+            .sumOf { xPoint ->
 
-        all.filter { it.letter == 'X' }
-            .map { xPoint ->
+                xPoint.adjacentPoints(maxX, maxY)
+                    .map { all.toLetterPoint(it) }
+                    .filter { it.letter == 'M' }
+                    .map { mPoint ->
 
-                val mPoints =
-                    xPoint.adjacentPoints(maxX, maxY)
-                        .map { all.toLetterPoint(it) }
-                        .filter { it.letter == 'M' }
-
-                mPoints.forEach { mPoint ->
-
-                    val aPoint: LetterPoint? =
-                        nextPointInDirection(xPoint, mPoint, maxX, maxY)
-                            ?.let { all.toLetterPoint(it) }
-                            ?.takeIf { it.letter == 'A' }
-
-                    val sPoint: LetterPoint? =
-                        aPoint?.let {
-                            nextPointInDirection(mPoint, aPoint, maxX, maxY)
+                        val aPoint: LetterPoint? =
+                            nextPointInDirection(xPoint, mPoint, maxX, maxY)
                                 ?.let { all.toLetterPoint(it) }
-                                ?.takeIf { it.letter == 'S' }
-                        }
+                                ?.takeIf { it.letter == 'A' }
 
-                    if (sPoint != null) words += 1
-                }
+                        val sPoint: LetterPoint? =
+                            aPoint?.let {
+                                nextPointInDirection(mPoint, aPoint, maxX, maxY)
+                                    ?.let { all.toLetterPoint(it) }
+                                    ?.takeIf { it.letter == 'S' }
+                            }
+
+                        if (sPoint != null) 1 else 0
+                    }.sum()
             }
-
-        return words
     }
 
     fun part2(input: List<String>): Int {
