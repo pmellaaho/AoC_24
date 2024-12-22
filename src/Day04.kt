@@ -3,6 +3,13 @@ fun main() {
     data class LetterPoint(val x: Int, val y: Int, val letter: Char)
     data class Point(val x: Int, val y: Int)
 
+    fun toLetterPoints(input: List<String>): List<LetterPoint> =
+        input.mapIndexed { y, s ->
+            s.mapIndexed { x, c ->
+                LetterPoint(x, y, c)
+            }
+        }.flatten()
+
     fun LetterPoint.adjacentPoints(maxX: Int, maxY: Int): List<Point> {
         val adjacentPoints =
             buildList<Point> {
@@ -45,19 +52,12 @@ fun main() {
     }
 
     fun part1(input: List<String>): Int {
-
-        val all = input.mapIndexed { y, s ->
-            s.mapIndexed { x, c ->
-                LetterPoint(x, y, c)
-            }
-        }.flatten()
-
+        val all = toLetterPoints(input)
         val maxX = input.lastIndex
         val maxY = all.last().y
 
         return all.filter { it.letter == 'X' }
             .sumOf { xPoint ->
-
                 xPoint.adjacentPoints(maxX, maxY)
                     .map { all.toLetterPoint(it) }
                     .filter { it.letter == 'M' }
@@ -80,8 +80,35 @@ fun main() {
             }
     }
 
+    fun msAtTopSsAtBottom(aPoint: LetterPoint, it: List<LetterPoint>): Boolean {
+        TODO("Not yet implemented")
+    }
+
     fun part2(input: List<String>): Int {
-        return 0
+        val all = toLetterPoints(input)
+        val maxX = input.lastIndex
+        val maxY = all.last().y
+
+        val matches =
+            all.filter { it.letter == 'A' }
+                .map { aPoint ->
+
+                    aPoint.adjacentPoints(maxX, maxY)
+                        .map { all.toLetterPoint(it) }
+                        .takeIf { it.size == 8 }
+                        ?.takeLast(4) // intersectional points
+                        ?.takeIf {
+                            it.filter { lp -> lp.letter == 'M' }.size == 2 &&
+                                    it.filter { lp -> lp.letter == 'S' }.size == 2
+                        }
+                        ?.takeIf { it[0].letter != it[2].letter  }
+                }
+                .filterNotNull()
+//                .also { it.println() }
+
+//        matches.size.println()
+
+        return matches.size
     }
 
 // Test if implementation meets criteria from the description, like:
@@ -90,10 +117,10 @@ fun main() {
 // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day04_test")
     check(part1(testInput) == 18)
-//    check(part2(testInput) == 48)
+    check(part2(testInput) == 9)
 
 // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day04")
     part1(input).println()
-//    part2(input).println()
+    part2(input).println()
 }
