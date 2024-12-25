@@ -104,9 +104,6 @@ fun main() {
                         ?.takeIf { it[0].letter != it[2].letter  }
                 }
                 .filterNotNull()
-//                .also { it.println() }
-
-//        matches.size.println()
 
         return matches.size
     }
