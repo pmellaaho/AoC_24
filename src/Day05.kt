@@ -89,5 +89,4 @@ fun main() {
     val input = readInput("Day05")
     part1(input).println()
     part2(input).println()
-//    check(part2(input) == 5180)
 }
